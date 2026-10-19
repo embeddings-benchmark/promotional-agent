@@ -15,6 +15,8 @@ sources:
   - https://arxiv.org/abs/2602.16008
   - https://arxiv.org/abs/2606.14958
   - https://github.com/embeddings-benchmark/mteb/pull/5454
+posted_on: 2026-10-19
+url: https://bsky.app/profile/mteb.org/post/3mya6a2o6ex2j
 ---
 
 ```
