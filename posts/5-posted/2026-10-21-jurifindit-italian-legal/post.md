@@ -17,6 +17,8 @@ sources:
   - https://github.com/embeddings-benchmark/results/pull/722
   - https://aclanthology.org/2026.findings-eacl.221/
   - https://huggingface.co/datasets/jurifindit/JuriFindIT
+posted_on: 2026-10-21
+url: https://bsky.app/profile/mteb.org/post/3myfbnfucal2p
 ---
 
 ```
