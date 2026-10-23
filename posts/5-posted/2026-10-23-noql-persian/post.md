@@ -15,6 +15,8 @@ sources:
   - https://github.com/embeddings-benchmark/results/pull/724
   - https://huggingface.co/shekar-ai/Noql/tree/fcdec3f8c64107a4a552b1877156d561fa1b6eb9
   - https://github.com/embeddings-benchmark/mteb/pull/5522
+posted_on: 2026-10-23
+url: https://bsky.app/profile/mteb.org/post/3mykbdfsp2r2u
 ---
 
 ```
