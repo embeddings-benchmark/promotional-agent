@@ -18,6 +18,8 @@ sources:
   - https://arxiv.org/abs/2605.04615
   - https://huggingface.co/naver/splade-code-8B
   - https://huggingface.co/naver/splade-code-06B
+posted_on: 2026-10-26
+url: https://bsky.app/profile/mteb.org/post/3mys7yrydkg2x
 ---
 
 Post 1 — card: `card-1-splade-code.png`
