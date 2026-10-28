@@ -157,7 +157,9 @@ def cohort(
             return False
         if min_languages > 1 and len(e.languages) < min_languages:
             return False
-        if max_active is not None and (e.active_params is None or not (min_active <= e.active_params <= max_active)):
+        if max_active is not None and (
+            e.active_params is None or not (min_active <= e.active_params <= max_active)
+        ):
             return False
         return True
 

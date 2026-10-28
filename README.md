@@ -4,8 +4,11 @@ An experiment in having an agent write MTEB's social posts — new models, resul
 datasets, benchmarks and features — without it saying anything MTEB would have to take
 back.
 
-Nothing is published yet. `posts/` is the publishing target: posts are drafted, verified
-and reviewed as files, and a Bluesky client would come later.
+It publishes. Twenty posts went out between 2026-08-03 and 2026-10-26 to
+[@mteb.org](https://bsky.app/profile/mteb.org) on Bluesky, each one drafted, verified and
+approved as a folder in `posts/` before a timer sent it. `posts/` is still the publishing
+target: the drafting, the numbers and the review are files in git, and the Bluesky client
+(`mteb-publish`) reads them rather than anything retyped.
 
 MTEB spans three repositories — `mteb` (the evaluation package, plus dataset and model
 implementations), `results` (evaluation results) and the leaderboard. Posts are triggered
@@ -81,7 +84,7 @@ field — a folder and a field would drift the moment one changed without the ot
 | `1-candidates` | something happened; a guess at why it matters. No numbers yet. | — |
 | `2-drafting` | being built, or stuck | `todo:` (our work) / `blocked_on:` (waiting on someone else) |
 | `3-review` | everything checkable has been checked; awaiting the editorial call | `verified:` `evidence:` `media:` |
-| `4-scheduled` | approved, with a date | `scheduled_for:` |
+| `4-scheduled` | approved, with a date | `scheduled_for:` `approved_by:` |
 | `5-posted` | archive of what went out | `posted_on:` `url:` |
 | `rejected` | dropped, and why | `reason:` (required) |
 
@@ -95,21 +98,24 @@ Everything behind a post lives in its folder, so any number can be traced withou
 leaving the folder it was published from:
 
 ```
-posts/3-review/2026-07-30-bekko-frontier/
+posts/5-posted/2026-08-03-bekko-thread/
   post.md              the text (Bluesky and LinkedIn), frontmatter and editorial notes
   fetch.py             the exact query that produced the numbers
+  fetch_tasks.py       a second query, for the thread's second card
   data.json            its output — the full cohort, not just the flattering rows
   card-1-frontier.html the card: its data, its copy, the markup that draws it, its alt text
   card-1-frontier.png  the rendered image
+  card-2-tasks.html    the second part's card
+  card-2-tasks.png
 ```
 
-Cards are always numbered — `card-1-<slug>.html`/`.png`, even for a single-part post —
-so `mteb-publish` can match each post part to its own card by filename alone. A thread
-adds `card-2-<slug>.*`, `card-3-<slug>.*` and so on; a part with no numbered card of its
-own is just text-only. `mteb-validate` rejects a bare `card.html`/`card.png`.
+Cards are always numbered — `card-1-<slug>.html`/`.png`, even for a single-part post — so
+`mteb-publish` can match each post part to its own card by filename alone. A thread adds
+`card-2-<slug>.*`, `card-3-<slug>.*` and so on; a part with no numbered card of its own is
+just text-only. `mteb-validate` rejects a bare `card.html`/`card.png`.
 
-A candidate has only `post.md`. The rest appear as it earns them, so the stage is
-visible from the file list alone.
+A candidate has only `post.md`. The rest appear as it earns them, so the stage is visible
+from the file list alone.
 
 ## Running it
 
@@ -121,22 +127,43 @@ uv run mteb-scan --since 2026-07-24            # dry run: prints what it found
 uv run mteb-scan --since 2026-07-24 --write    # create folders in posts/1-candidates/
 
 # recompute a post's numbers from the results repo (~4 min; ~15 for a whole-registry post)
-uv run posts/3-review/2026-07-30-bekko-frontier/fetch.py
+uv run posts/5-posted/2026-08-03-bekko-thread/fetch.py
 
-# check every post against the mechanical rules (instant)
+# check every post against the mechanical rules (instant), and print the pipeline's shape
 uv run mteb-validate
+uv run mteb-validate --stage 3-review          # one stage
+uv run mteb-validate --strict                  # warnings become failures
 
-# render its card (~3 s)
-uv run mteb-render --card posts/3-review/2026-07-30-bekko-frontier/card-1-frontier.html \
-                   --out posts/3-review/2026-07-30-bekko-frontier/card-1-frontier.png
+# render a card (~3 s)
+uv run mteb-render --card posts/5-posted/2026-10-26-splade-code/card-1-splade-code.html \
+                   --out posts/5-posted/2026-10-26-splade-code/card-1-splade-code.png
+
+# what is due, without sending anything; --send publishes and files the post
+uv run mteb-publish --due
+uv run mteb-publish --all
 ```
 
 `mteb-scan` is safe to re-run: any PR already referenced anywhere in the pipeline —
-including in `rejected/` — is skipped, so a rejection stays rejected.
+including in `rejected/`, whether written as `mteb#5043` or as a GitHub URL — is skipped,
+so a rejection stays rejected.
 
 Each post's `fetch.py` is a standalone [PEP 723](https://peps.python.org/pep-0723/)
 script declaring its own pinned dependencies. That is deliberate: a post's provenance
 should not depend on the state of a shared environment.
+
+## Checks
+
+```bash
+uv run --extra dev pytest      # the tooling's test suite (~0.2 s, no network)
+uv run --extra dev ruff check  # lint
+uv run mteb-validate           # the posts themselves
+```
+
+`.github/workflows/ci.yml` runs all three on every push and PR. `mteb-validate` covers the
+rules a machine can check on a *post*; `pytest` covers the rules a machine can check on
+the *tooling* — the date arithmetic, the cohort builders, the prompt-injection sanitiser,
+and every publish-time refusal. Neither can tell you whether a post is worth publishing;
+that is `CONTRIBUTING.md` and a person.
 
 ## Layout
 
@@ -144,21 +171,31 @@ should not depend on the state of a shared environment.
 README.md            this file — what it is, how it runs
 CONTRIBUTING.md      how to take a candidate to a scheduled post, and the editorial rules
 AGENTS.md            the non-negotiables, for whatever agent is driving
+profile.md           account identity, voice, and the bio text
+social-handles.yaml  GitHub -> social handle map, with sources; drives tagging
 docs/
   card-design.md     how the charts are built, and why
   mteb-data.md       working with the MTEB API — the parts that surprise
+  standards/         readable copies of the editorial standards CONTRIBUTING.md cites
 src/mtebpost/
   scan.py            stage 0: candidate detection from merged PRs
-  validate.py        checks the rules a machine can check
-  scoreboard.py      leaderboard queries and cohort selection
-  cards.py           writes query results into a card's #card-data block
+  validate.py        the rules a machine can check, and the queue summary
+  publish.py         the Bluesky client: due-post selection, guardrails, threading
   render.py          card.html -> png + alt text
+  cards.py           writes query results into a card's #card-data block
+  leaderboard_api.py live leaderboard-backend queries — the data path everything uses
+  model_release.py   cohort selection, Pareto/radar/bars advice, card-data builders
+  scoreboard.py      the local-`mteb` path; legacy, needs the `leaderboard` extra
+  sanitise.py        cleans contributor prose before any of it reaches a model
+templates/model-release/  the three card shapes (bars, pareto, radar)
 posts/               the pipeline (above)
-profile.md           account identity, voice, and the bio text
-social-handles.yaml  GitHub -> social handle map, with sources; drives tagging
-assets/              MTEB logo
+tests/               the suite ci.yml runs
+assets/, brand/      logo, avatar and banner source
+.github/workflows/   scan (weekly), publish (hourly), ci (every change)
 ```
 
 `mteb` is heavy — torch, transformers, sentence-transformers, roughly 2 GB — and only
-`scoreboard` needs it, so it sits behind the `leaderboard` extra. Rendering a card does
-not pull a deep-learning stack.
+`scoreboard` needs it, so it sits behind the `leaderboard` extra. Nothing else does:
+`model_release` and every `fetch.py` written since 2026-09 talk to the leaderboard API over
+HTTP, which is both faster and current enough to know about a model registered last week.
+Rendering a card does not pull a deep-learning stack either.

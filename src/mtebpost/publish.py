@@ -233,13 +233,13 @@ def send(post: pathlib.Path, handle: str) -> None:
         sys.exit(f"{d.name} is in {d.parent.name}, not 4-scheduled")
     who = fm.get("approved_by", "")
     if not who or who.lower() in ("agent", "none", "auto", "self"):
-        sys.exit(f"{d.name} has no named human approver — see AGENTS.md rule 10")
+        sys.exit(f"{d.name} has no named human approver — see AGENTS.md rule 13")
 
     when = parse_when(fm.get("scheduled_for", ""))
     if when is None:
         sys.exit(f"{d.name}: unparseable or naive scheduled_for "
                  f"{fm.get('scheduled_for')!r} — needs a timezone offset")
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     if when > now:
         sys.exit(f"{d.name} is not due until {when.isoformat()}")
     if too_late(when, now):
@@ -277,7 +277,7 @@ def send(post: pathlib.Path, handle: str) -> None:
         record = {
             "$type": "app.bsky.feed.post",
             "text": body,
-            "createdAt": dt.datetime.now(dt.timezone.utc)
+            "createdAt": dt.datetime.now(dt.UTC)
                            .isoformat(timespec="seconds").replace("+00:00", "Z"),
             "langs": ["en"],
         }
@@ -315,6 +315,17 @@ def send(post: pathlib.Path, handle: str) -> None:
     print(f"\nthread: {url}")
 
 
+def local_day(when: dt.datetime | None, now: dt.datetime | None = None) -> dt.date:
+    """The date a post went out, in the post's own timezone.
+
+    A 23:30 post at UTC-3 goes out on the 26th where its audience is; stamping `posted_on`
+    from the runner's UTC clock files it under the 27th, and the archive then disagrees
+    with the folder name it sits in.
+    """
+    now = now or dt.datetime.now(dt.UTC)
+    return now.astimezone(when.tzinfo).date() if when else now.date()
+
+
 def _record_posted(post: pathlib.Path, url: str) -> None:
     """Move the folder to 5-posted and stamp it.
 
@@ -322,7 +333,7 @@ def _record_posted(post: pathlib.Path, url: str) -> None:
     layout: a post that went out but still sits in 4-scheduled will be offered again.
     """
     text = post.read_text()
-    today = dt.date.today().isoformat()
+    today = local_day(parse_when(frontmatter(text).get("scheduled_for", ""))).isoformat()
     end = text.find("\n---", 3)
     text = text[:end] + f"\nposted_on: {today}\nurl: {url}" + text[end:]
     post.write_text(text)
@@ -337,7 +348,8 @@ def _wrap(s: str, width: int) -> list[str]:
     out, line = [], ""
     for word in s.split():
         if len(line) + len(word) + 1 > width:
-            out.append(line); line = word
+            out.append(line)
+            line = word
         else:
             line = f"{line} {word}".strip()
     if line:
@@ -367,7 +379,7 @@ def main() -> None:
         # Everything whose moment has arrived, earliest first — then at most one, because
         # the cadence ceiling is one post a day (AGENTS.md rule 4) and a backlog must
         # drain one at a time rather than arrive as a burst.
-        now = dt.datetime.now(dt.timezone.utc)
+        now = dt.datetime.now(dt.UTC)
         ready = sorted(
             ((parse_when(frontmatter(p.read_text()).get("scheduled_for", "")), p)
              for p in scheduled),

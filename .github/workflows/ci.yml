@@ -1,0 +1,55 @@
+name: Checks
+
+# Every change to the tooling, on every branch and every PR.
+#
+# This is the workflow the repo was missing: `scan.yml` and `publish.yml` run on a timer
+# and prove that the pipeline still runs, but nothing checked a *change* to it. A rule in
+# CONTRIBUTING.md that only a person remembers is a rule that gets broken quietly; the
+# validator and the test suite are how the mechanical half of it stays true, and they are
+# only worth having if something runs them before the change lands.
+#
+# `posts/` is not linted (see pyproject.toml): each `fetch.py` there is a frozen record of
+# how a published number was computed, and reformatting one would break exactly what it
+# exists to prove.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # --no-deps on purpose: nothing checked here needs playwright (only card rendering
+      # does) or `mteb` (only the local-scoreboard path does). The suite is stdlib plus
+      # pytest, so this stays a few seconds rather than a torch download.
+      - name: Install
+        run: |
+          pip install -e . --no-deps
+          pip install pytest ruff
+
+      - name: Lint
+        run: ruff check
+
+      - name: Test
+        run: pytest
+
+      # The pipeline itself, as it stands in this checkout — including the queue summary,
+      # which is the only place the age of the backlog is visible.
+      - name: Validate posts
+        run: mteb-validate

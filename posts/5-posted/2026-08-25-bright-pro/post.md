@@ -41,7 +41,7 @@ with complete 7-task coverage, unusually thorough for a benchmark's first result
 That completeness is why this is a leaderboard post rather than a bare announcement.
 
 `mteb#5129`, a same-day duplicate re-registration of the same benchmark ("Readd it from
-#4929"), is rejected separately — see `rejected/bright-pro-benchmark`.
+#4929"), is rejected separately — see `posts/rejected/bright-pro-benchmark`.
 
 ## What the leaderboard shows
 

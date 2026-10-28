@@ -34,7 +34,9 @@ def _get(path: str) -> dict:
         with urllib.request.urlopen(url, timeout=60) as r:
             return json.load(r)
     except urllib.error.HTTPError as e:
-        raise SystemExit(f"{url} failed: {e.code} {e.read().decode(errors='replace')}")
+        raise SystemExit(
+            f"{url} failed: {e.code} {e.read().decode(errors='replace')}"
+        ) from e
 
 
 def _score100(v: float) -> float:

@@ -2,6 +2,7 @@
 name = "mtebpost"
 version = "0.1.0"
 description = "Tooling for drafting MTEB social posts: candidate detection, leaderboard queries, card rendering."
+readme = "README.md"
 requires-python = ">=3.11"
 
 # Base install is deliberately light. `mteb` pulls torch, transformers and
@@ -14,6 +15,8 @@ dependencies = [
 
 [project.optional-dependencies]
 leaderboard = ["mteb>=2.18.11"]
+# CI installs this to run the suite; `uv run --extra dev pytest` does the same locally.
+dev = ["pytest>=8", "ruff>=0.6"]
 
 [project.scripts]
 mteb-scan = "mtebpost.scan:main"
@@ -34,3 +37,27 @@ packages = ["src/mtebpost"]
 # shared environment.
 [tool.uv]
 exclude-newer = "2026-08-01T00:00:00Z"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+# The rules the code is held to. Narrow on purpose: pyflakes + pycodestyle + import
+# order + modernisation. `B` catches the exception-handling mistakes that matter most
+# here, since almost every module's failure path is a `sys.exit` with a message.
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+# Each post's `fetch.py` is a PEP 723 provenance artifact: it is the exact query that
+# produced a published post's numbers, frozen at the moment it ran. Linting it would
+# invite edits, and an edit to a fetch script after publication breaks the one property
+# the folder exists to provide.
+extend-exclude = ["posts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]  # assertions read better unwrapped than contorted

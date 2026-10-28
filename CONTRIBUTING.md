@@ -396,7 +396,13 @@ uv run mteb-validate --stage 3-review   # one stage
 It checks what a machine can: the 300-character limit, required frontmatter per stage,
 that `media:` points at a file that exists, that a thread declares as many
 posts as it contains, that every card carries alt text and has been rendered, that folder dates
-appear only once scheduled and match `scheduled_for:`, and that no two posts share a day.
+appear only once scheduled and match `scheduled_for:`, that no two posts share a day, and
+that a scheduled post is not already past its `expires:` date.
+
+It also prints the pipeline's shape — how many posts sit in each stage, and how many
+candidates and drafts are past their expiry. That count is not a warning, because
+rejecting a stale candidate is a judgement someone has to make; it is there so the backlog
+is visible before it gets to be a third of the queue.
 
 **A clean run means nothing is obviously broken. It does not mean the post is good.**
 Whether a cohort is fair, whether a claim is scoped to its evidence, whether the subject
