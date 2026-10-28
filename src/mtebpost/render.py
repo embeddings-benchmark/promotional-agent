@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Render a post's card HTML to PNG.
 
-    uv run visuals/render.py --card posts/<id>/card-1-<slug>.html --out posts/<id>/card-1-<slug>.png
-    uv run visuals/render.py --card posts/<id>/card-1-<slug>.html --mode dark --out /tmp/preview.png
+    uv run mteb-render --card posts/<id>/card-1-<slug>.html --out posts/<id>/card-1-<slug>.png
+    uv run mteb-render --card posts/<id>/card-1-<slug>.html --mode dark --out /tmp/preview.png
 
 The card is self-contained: `fetch.py` writes its numbers into the `#card-data` block,
 and the copy lives in a `COPY` object beside it. So opening `card.html` in a browser

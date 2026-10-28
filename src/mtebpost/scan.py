@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Stage 1 of the pipeline: find things that *might* be worth posting.
 
-    uv run posts/scan.py --since 2026-07-20
-    uv run posts/scan.py --since 2026-07-20 --write     # create candidate folders
+    uv run mteb-scan --since 2026-07-20
+    uv run mteb-scan --since 2026-07-20 --write     # create candidate folders
 
 Reads merged PRs from the mteb and results repos via `gh`, classifies them by title
 convention, and pairs each model addition with its results PR. Output is a list of
@@ -30,6 +30,7 @@ instead of being re-proposed the next morning.
 """
 
 import argparse
+import calendar
 import dataclasses
 import json
 import pathlib
@@ -37,6 +38,7 @@ import re
 import subprocess
 import sys
 from datetime import date
+
 
 @dataclasses.dataclass
 class Candidate:
@@ -133,6 +135,23 @@ def slug(title: str) -> str:
     return "-".join(s.split("-")[:5]) or "candidate"
 
 
+def expiry(merged: str, months: int = 1) -> str:
+    """The candidate's shelf life: `months` after the trigger date, clamped to month end.
+
+    News older than about a month is not news (CONTRIBUTING.md, "3 -> 4: scheduling"),
+    so every candidate carries an `expires:` date. A bare `date.replace(month=...)`
+    cannot express that: rolling 31 January forward asks for 31 February and raises
+    ValueError, and rolling December forward keeps the year it started in. Both would
+    crash a scan — one of the few things in this pipeline that fails silently, because
+    the crash lands in a scheduled workflow nobody is watching.
+    """
+    d = date.fromisoformat(merged)
+    years, month = divmod(d.month - 1 + months, 12)
+    year = d.year + years
+    day = min(d.day, calendar.monthrange(year, month + 1)[1])
+    return date(year, month + 1, day).isoformat()
+
+
 STUB = """---
 id: {id}
 type: {type}
@@ -155,6 +174,16 @@ sources:
 """
 
 
+# Two spellings of the same fact. `trigger:` writes a PR as `mteb#5043`; `sources:`
+# writes it as a URL, the way it was copied out of GitHub. Reading only the first form
+# means a PR that appears only in `sources:` is not tracked — and a rejected candidate
+# whose second PR is recorded only as a link gets re-proposed by the results branch.
+PR_REF = re.compile(
+    r"\b(mteb|results)#(\d+)\b"
+    r"|github\.com/embeddings-benchmark/(mteb|results)/(?:pull|issues)/(\d+)"
+)
+
+
 def already_tracked(posts: pathlib.Path) -> set[str]:
     """PR references (`mteb#5043`) that already exist anywhere in the pipeline.
 
@@ -163,8 +192,10 @@ def already_tracked(posts: pathlib.Path) -> set[str]:
     """
     seen = set()
     for post in posts.rglob("post.md"):
-        for m in re.finditer(r"(?:mteb|results)#(\d+)", post.read_text()):
-            seen.add(m.group(0))
+        for m in PR_REF.finditer(post.read_text()):
+            repo = m.group(1) or m.group(3)
+            number = m.group(2) or m.group(4)
+            seen.add(f"{repo}#{number}")
     return seen
 
 
@@ -271,18 +302,20 @@ def main() -> None:
         # `trigger_date` in the frontmatter keeps the "when did this happen" fact.
         name = slug(pr["title"])
         d = out / name
-        if d.exists():
-            continue
-        # slugs are derived from PR titles and can collide; disambiguate rather than skip
+        # Slugs are derived from PR titles and collide: two different PRs titled "Add
+        # Bekko embedding models" produce one name, and `already_tracked` has already
+        # removed the ones that really are duplicates. So a name that is taken belongs
+        # to a different candidate, and skipping it — which is what returning here used
+        # to do — loses the story without saying so.
         n = 2
-        while (out / name).exists():
-            name, n = f"{slug(pr['title'])}-{n}", n + 1
-        d = out / name
+        while d.exists():
+            name = f"{slug(pr['title'])}-{n}"
+            d = out / name
+            n += 1
         d.mkdir()
         srcs = [f"  - {u}" for u in c.sources]
-        exp = date.fromisoformat(merged).replace(month=(date.fromisoformat(merged).month % 12) + 1)
         (d / "post.md").write_text(STUB.format(
-            id=name, type=c.type, date=merged, expires=exp.isoformat(),
+            id=name, type=c.type, date=merged, expires=expiry(merged),
             trigger=c.trigger,
             sources="\n".join(srcs), hypothesis=c.hypothesis,
         ))

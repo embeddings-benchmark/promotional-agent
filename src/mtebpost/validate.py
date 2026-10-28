@@ -201,20 +201,27 @@ def check_post(path: pathlib.Path, stage: str, rep: Report) -> None:
     exp = fm.get("expires")
     if exp and stage in ("3-review", "4-scheduled"):
         try:
-            if dt.date.fromisoformat(exp) < dt.date.today():
-                rep.warn(where, f"expired on {exp}; reject rather than post stale")
-            elif when and dt.date.fromisoformat(exp) < when.date():
-                rep.error(where, f"scheduled for {when.date()} but expires {exp} — "
-                                 "it would go out already stale")
+            expires = dt.date.fromisoformat(exp)
         except ValueError:
             rep.error(where, f"unparseable expires: {exp!r}")
+        else:
+            # The scheduled-after-expiry check comes first because it is the stronger
+            # finding: a post whose date has already passed AND is scheduled past its
+            # expiry is about to go out stale, which is an error, not a nudge. Checking
+            # "already expired" first would shadow it for every post in a queue that is
+            # more than a few weeks old — exactly the queue this check is for.
+            if when and expires < when.date():
+                rep.error(where, f"scheduled for {when.date()} but expires {exp} — "
+                                 "it would go out already stale")
+            elif expires < dt.date.today():
+                rep.warn(where, f"expired on {exp}; reject rather than post stale")
 
     # Publishing is unattended now, so a post whose day has passed must be caught here
     # rather than discovered when the workflow refuses it. The window is the rest of the
     # scheduled local day: a run delayed by GitHub still publishes, a queue stuck for
     # days does not.
     if stage == "4-scheduled" and when and when.tzinfo:
-        now_local = dt.datetime.now(dt.timezone.utc).astimezone(when.tzinfo)
+        now_local = dt.datetime.now(dt.UTC).astimezone(when.tzinfo)
         if now_local.date() > when.date():
             rep.warn(where, f"was due {when.date()} and will no longer publish; "
                             "re-date it or reject it")
@@ -244,6 +251,40 @@ def check_schedule(posts: pathlib.Path, rep: Report) -> None:
             rep.error("schedule", f"{day} has {len(items)} posts: {', '.join(items)}")
 
 
+def queue_stats(posts: pathlib.Path) -> list[tuple[str, int, int]]:
+    """(stage, total, expired) per stage — the pipeline at a glance.
+
+    Expiry is counted rather than raised as a warning on purpose: an expired candidate is
+    a decision someone has to make, and `mteb-validate` failing every week until an
+    editorial backlog is cleared would train everyone to ignore it. Silence is worse,
+    though — a third of the candidate queue once sat past its expiry with nothing anywhere
+    saying so, and a queue nobody can see the shape of is a queue nobody triages.
+    """
+    today = dt.date.today()
+    out = []
+    for stage in STAGES:
+        d = posts / stage
+        if not d.is_dir():
+            continue
+        total = expired = 0
+        for post in d.glob("*/post.md"):
+            total += 1
+            # Only the live end of the pipeline: an `expires:` date on a published post
+            # or a rejection is a record of when it was current, not a task.
+            if stage not in ("1-candidates", "2-drafting", "3-review", "4-scheduled"):
+                continue
+            exp = frontmatter(post.read_text()).get("expires")
+            if not exp:
+                continue
+            try:
+                if dt.date.fromisoformat(exp) < today:
+                    expired += 1
+            except ValueError:
+                pass
+        out.append((stage, total, expired))
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--posts", default="posts", type=pathlib.Path)
@@ -268,6 +309,12 @@ def main() -> None:
         print(f"  warn   {w}")
     for e in rep.errors:
         print(f"  ERROR  {e}")
+
+    if not args.stage:
+        print()
+        for stage, total, expired in queue_stats(args.posts):
+            note = f"   ({expired} past expires)" if expired else ""
+            print(f"  {stage:<14} {total:>3}{note}")
 
     bad = rep.errors or (rep.warnings and args.strict)
     print(f"\n{n} posts checked — {len(rep.errors)} errors, {len(rep.warnings)} warnings")
