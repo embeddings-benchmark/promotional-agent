@@ -90,6 +90,12 @@ def main() -> None:
     ap.add_argument("--out", required=True)
     ap.add_argument("--mode", choices=("light", "dark"), default="light")
     ap.add_argument("--size", choices=tuple(PRESETS), default="card")
+    # Chrome is the default because a system Chrome renders the fonts a card is designed
+    # around, and GitHub's runners ship it. A machine without Chrome — a fresh Linux box,
+    # a container — can use Playwright's own chromium instead of failing outright:
+    #     uv run playwright install chromium && uv run mteb-render --channel chromium ...
+    ap.add_argument("--channel", default="chrome",
+                    help="Playwright browser channel: chrome (default) or chromium")
     args = ap.parse_args()
 
     width, height = PRESETS[args.size]
@@ -103,7 +109,7 @@ def main() -> None:
         src = pathlib.Path(tmp) / "card.html"
         src.write_text(page_html)
         with sync_playwright() as p:
-            browser = p.chromium.launch(channel="chrome")
+            browser = p.chromium.launch(channel=args.channel)
             page = browser.new_page(
                 viewport={"width": width, "height": height},
                 device_scale_factor=SCALE,
