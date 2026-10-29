@@ -90,6 +90,12 @@ def main() -> None:
     ap.add_argument("--out", required=True)
     ap.add_argument("--mode", choices=("light", "dark"), default="light")
     ap.add_argument("--size", choices=tuple(PRESETS), default="card")
+    # Chrome is the default because a system Chrome renders the fonts a card is designed
+    # around, and GitHub's runners ship it. A machine without Chrome — a fresh Linux box,
+    # a container — can use Playwright's own chromium instead of failing outright:
+    #     uv run playwright install chromium && uv run mteb-render --channel chromium ...
+    ap.add_argument("--channel", default="chrome",
+                    help="Playwright browser channel: chrome (default) or chromium")
     args = ap.parse_args()
 
     width, height = PRESETS[args.size]
@@ -103,15 +109,28 @@ def main() -> None:
         src = pathlib.Path(tmp) / "card.html"
         src.write_text(page_html)
         with sync_playwright() as p:
-            browser = p.chromium.launch(channel="chrome")
-            page = browser.new_page(
-                viewport={"width": width, "height": height},
-                device_scale_factor=SCALE,
-            )
-            page.goto(src.as_uri())
-            page.wait_for_function("window.__altText !== undefined")
-            page.screenshot(path=str(out))
-            alt = page.evaluate("window.__altText")
+            browser = p.chromium.launch(channel=args.channel)
+            # Chromium intermittently fails to capture a real screenshot at 2x with a
+            # "Page.captureScreenshot: Unable to capture screenshot" protocol error, with
+            # nothing wrong on the page. It succeeds on a fresh page, so one retry converts
+            # a confusing failure into a wait of about a second.
+            alt = None
+            for attempt in (1, 2, 3):
+                page = browser.new_page(
+                    viewport={"width": width, "height": height},
+                    device_scale_factor=SCALE,
+                )
+                page.goto(src.as_uri())
+                page.wait_for_function("window.__altText !== undefined")
+                alt = page.evaluate("window.__altText")
+                try:
+                    page.screenshot(path=str(out))
+                    page.close()
+                    break
+                except Exception:
+                    page.close()
+                    if attempt == 3:
+                        raise
             browser.close()
 
     write_alt(pathlib.Path(args.card), alt)

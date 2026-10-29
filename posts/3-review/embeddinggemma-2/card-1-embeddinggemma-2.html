@@ -1,0 +1,472 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>EmbeddingGemma 2 — one model, six boards</title>
+<!--
+  Card for posts/3-review/embeddinggemma-2.
+
+  Review's shape: one column per benchmark, the two code boards under a joint heading, no
+  partial boards, and reference rows instead of a bare rank — the ceiling on each board,
+  the open-weight ceiling, the ceiling under 1B total parameters, two named multimodal
+  competitors, and the subject highlighted.
+
+  Values are written by fetch.py into #card-data; every sentence is in COPY. Palette
+  inherited from templates/model-release/card-bars.html.
+-->
+<script type="application/json" id="card-data">
+{
+  "eyebrow": "NEW ON MTEB",
+  "columns": [
+    {
+      "group": "Multilingual",
+      "benchmark": "MTEB(Multilingual, v2)",
+      "rows": [
+        {
+          "label": "Best open weights",
+          "model": "microsoft/harrier-oss-v1-27b",
+          "score": 74.27,
+          "params_b": 27.009,
+          "fixed": false,
+          "muted": true
+        },
+        {
+          "label": "Best open, ≤1B params",
+          "model": "microsoft/harrier-oss-v1-0.6b",
+          "score": 69.01,
+          "params_b": 0.596,
+          "fixed": false
+        },
+        {
+          "label": "jinaai/jina-embeddings-v5-omni-small",
+          "model": "jinaai/jina-embeddings-v5-omni-small",
+          "score": 67.0,
+          "params_b": 1.626,
+          "fixed": true
+        },
+        {
+          "label": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "model": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "score": 63.5,
+          "params_b": 2.445,
+          "fixed": true
+        },
+        {
+          "label": "google/embeddinggemma-2",
+          "model": "google/embeddinggemma-2",
+          "score": 60.52,
+          "params_b": 0.271,
+          "fixed": true,
+          "subject": true
+        }
+      ]
+    },
+    {
+      "group": "English",
+      "benchmark": "MTEB(eng, v2)",
+      "rows": [
+        {
+          "label": "Best open weights",
+          "model": "Kingsoft-LLM/QZhou-Embedding",
+          "score": 75.97,
+          "params_b": 7.071,
+          "fixed": false,
+          "muted": true
+        },
+        {
+          "label": "Best open, ≤1B params",
+          "model": "infgrad/Jasper-Token-Compression-600M",
+          "score": 74.75,
+          "params_b": 0.607,
+          "fixed": false
+        },
+        {
+          "label": "jinaai/jina-embeddings-v5-omni-small",
+          "model": "jinaai/jina-embeddings-v5-omni-small",
+          "score": 71.78,
+          "params_b": 1.626,
+          "fixed": true
+        },
+        {
+          "label": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "model": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "score": 67.47,
+          "params_b": 2.445,
+          "fixed": true
+        },
+        {
+          "label": "google/embeddinggemma-2",
+          "model": "google/embeddinggemma-2",
+          "score": 67.53,
+          "params_b": 0.271,
+          "fixed": true,
+          "subject": true
+        }
+      ]
+    },
+    {
+      "group": "Image",
+      "benchmark": "MIEB(lite)",
+      "rows": [
+        {
+          "label": "Best open weights",
+          "model": "LCO-Embedding/LCO-Embedding-Omni-7B",
+          "score": 68.76,
+          "params_b": 8.932,
+          "fixed": false,
+          "muted": true
+        },
+        {
+          "label": "Best open, ≤1B params",
+          "model": "google/embeddinggemma-2",
+          "score": 63.52,
+          "params_b": 0.271,
+          "fixed": false
+        },
+        {
+          "label": "jinaai/jina-embeddings-v5-omni-small",
+          "model": "jinaai/jina-embeddings-v5-omni-small",
+          "score": 61.07,
+          "params_b": 1.626,
+          "fixed": true
+        },
+        {
+          "label": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "model": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "score": 55.96,
+          "params_b": 2.445,
+          "fixed": true
+        },
+        {
+          "label": "google/embeddinggemma-2",
+          "model": "google/embeddinggemma-2",
+          "score": 63.52,
+          "params_b": 0.271,
+          "fixed": true,
+          "subject": true
+        }
+      ]
+    },
+    {
+      "group": "Audio",
+      "benchmark": "MAEB(v1)",
+      "rows": [
+        {
+          "label": "Best open weights",
+          "model": "LCO-Embedding/LCO-Embedding-Omni-7B",
+          "score": 53.54,
+          "params_b": 8.932,
+          "fixed": false,
+          "muted": true
+        },
+        {
+          "label": "Best open, ≤1B params",
+          "model": "jinaai/jina-embeddings-v5-omni-nano",
+          "score": 50.14,
+          "params_b": 0.986,
+          "fixed": false
+        },
+        {
+          "label": "jinaai/jina-embeddings-v5-omni-small",
+          "model": "jinaai/jina-embeddings-v5-omni-small",
+          "score": 50.41,
+          "params_b": 1.626,
+          "fixed": true
+        },
+        {
+          "label": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "model": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "score": 52.36,
+          "params_b": 2.445,
+          "fixed": true
+        },
+        {
+          "label": "google/embeddinggemma-2",
+          "model": "google/embeddinggemma-2",
+          "score": 49.31,
+          "params_b": 0.271,
+          "fixed": true,
+          "subject": true
+        }
+      ]
+    },
+    {
+      "group": "Code",
+      "benchmark": "MTEB(Code, v1)",
+      "rows": [
+        {
+          "label": "Best open weights",
+          "model": "papr-ai/papr-embed-code-1-4b",
+          "score": 81.13,
+          "params_b": 4.022,
+          "fixed": false,
+          "muted": true
+        },
+        {
+          "label": "Best open, ≤1B params",
+          "model": "google/embeddinggemma-2",
+          "score": 77.88,
+          "params_b": 0.271,
+          "fixed": false
+        },
+        {
+          "label": "jinaai/jina-embeddings-v5-omni-small",
+          "model": null,
+          "score": null,
+          "params_b": null,
+          "fixed": true
+        },
+        {
+          "label": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "model": null,
+          "score": null,
+          "params_b": null,
+          "fixed": true
+        },
+        {
+          "label": "google/embeddinggemma-2",
+          "model": "google/embeddinggemma-2",
+          "score": 77.88,
+          "params_b": 0.271,
+          "fixed": true,
+          "subject": true
+        }
+      ]
+    },
+    {
+      "group": "Code",
+      "benchmark": "CoIR",
+      "rows": [
+        {
+          "label": "Best open weights",
+          "model": "papr-ai/papr-embed-code-1-4b",
+          "score": 80.12,
+          "params_b": 4.022,
+          "fixed": false,
+          "muted": true
+        },
+        {
+          "label": "Best open, ≤1B params",
+          "model": "codefuse-ai/F2LLM-v2-0.6B",
+          "score": 77.66,
+          "params_b": 0.596,
+          "fixed": false
+        },
+        {
+          "label": "jinaai/jina-embeddings-v5-omni-small",
+          "model": null,
+          "score": null,
+          "params_b": null,
+          "fixed": true
+        },
+        {
+          "label": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+          "model": null,
+          "score": null,
+          "params_b": null,
+          "fixed": true
+        },
+        {
+          "label": "google/embeddinggemma-2",
+          "model": "google/embeddinggemma-2",
+          "score": 76.33,
+          "params_b": 0.271,
+          "fixed": true,
+          "subject": true
+        }
+      ]
+    }
+  ]
+}
+</script>
+<script type="text/plain" id="alt-text">
+NEW ON MTEB: One open model, measured on six boards. google/embeddinggemma-2. Best open model under 1B total parameters on the image and code boards; mid-field on multilingual text. Scores are Mean(Task) per board, compared only against models with complete results there. Per board, in row order — best, best open weights, best open under 1B parameters, jina-embeddings-v5-omni-small, BidirLM-Omni-2.5B-Embedding, google/embeddinggemma-2: MTEB(Multilingual, v2): 74.27, 69.01, 67.00, 63.50, 60.52. MTEB(eng, v2): 75.97, 74.75, 71.78, 67.47, 67.53. MIEB(lite): 68.76, 63.52, 61.07, 55.96, 63.52. MAEB(v1): 53.54, 50.14, 50.41, 52.36, 49.31. MTEB(Code, v1): 81.13, 77.88, not run, not run, 77.88. CoIR: 80.12, 77.66, not run, not run, 76.33. Blank cells mean no complete result on that board. Source: MTEB, leaderboard.mteb.org.
+</script>
+
+<style>
+:root {
+    --surface:        #fcfcfb;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --accent:         #3d7bff;
+    --peer:           #b9b7b0;
+    --gridline:       #e1e0d9;
+    --axis:           #c3c2b7;
+    --hairline:       rgba(11, 11, 11, 0.10);
+    --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  [data-mode="dark"] {
+    --surface:        #1a1a19;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --accent:         #5b8fff;
+    --peer:           #55534e;
+    --gridline:       #2c2c2a;
+    --axis:           #383835;
+    --hairline:       rgba(255, 255, 255, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--surface); }
+  body {
+    width: 1200px; height: 1200px; overflow: hidden;
+    color: var(--text-primary); font-family: var(--font-sans);
+    display: flex; flex-direction: column;
+    padding: 40px 48px 26px;
+  }
+
+  header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .eyebrow {
+    font-size: 17px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h1 { font-size: 40px; font-weight: 640; letter-spacing: -0.02em; margin-top: 9px; max-width: 900px; }
+  .subject { font-size: 20px; font-weight: 600; margin-top: 10px; }
+  .subtitle { font-size: 18px; color: var(--text-secondary); margin-top: 5px; max-width: 960px; line-height: 1.3; }
+  .brand { font-size: 28px; font-weight: 700; letter-spacing: 0.01em; padding-top: 4px; }
+
+  table { width: 100%; margin-top: 26px; border-collapse: collapse; table-layout: fixed; }
+  th, td { padding: 0 0 0 12px; text-align: right; vertical-align: middle; }
+  th:first-child, td:first-child { text-align: left; padding-left: 0; }
+
+  thead .group th {
+    font-size: 12.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--accent); text-align: center; padding: 0 0 6px 0;
+    border-bottom: 2px solid var(--accent); padding-left: 12px;
+  }
+  thead .bench th {
+    font-size: 13px; font-weight: 600; color: var(--text-primary);
+    padding: 8px 0 7px 12px; border-bottom: 1px solid var(--hairline);
+    line-height: 1.2;
+  }
+  thead .bench th:first-child { color: var(--text-muted); font-weight: 500; }
+  thead .bench .tasks { display: block; font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
+
+  tbody td { height: 104px; border-bottom: 1px solid var(--gridline); }
+  tbody tr:last-child td { border-bottom: none; }
+  .rowlabel { font-size: 12.5px; color: var(--text-secondary); line-height: 1.25; max-width: 150px; }
+  .score { font-size: 25px; font-weight: 640; font-variant-numeric: tabular-nums; }
+  .who, .who2 {
+    font-size: 9.5px; color: var(--text-muted); margin-top: 3px; line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+  .name, .name2 {
+    font-size: 11.5px; color: var(--text-secondary); line-height: 1.15; margin-top: 1px;
+    overflow-wrap: anywhere;
+  }
+  tr.subject .name2 { color: var(--accent); }
+  .params { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .missing .score { color: var(--axis); font-weight: 500; }
+  /* The open-weight ceiling is context, not the story: it stays in the table but recedes. */
+  tr.muted .score { color: var(--text-muted); font-weight: 560; }
+  tr.muted .name, tr.muted .name2 { color: var(--text-muted); }
+  tr.muted .rowlabel { color: var(--text-muted); }
+  tr.subject td { background: color-mix(in srgb, var(--accent) 9%, transparent); }
+  tr.subject td:first-child { border-left: 4px solid var(--accent); padding-left: 10px; }
+  tr.subject .rowlabel { color: var(--accent); font-weight: 600; }
+
+  .note { font-size: 12.5px; color: var(--text-muted); margin-top: 12px; line-height: 1.4; }
+  footer {
+    margin-top: auto; padding-top: 13px; border-top: 1px solid var(--hairline);
+    display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary);
+  }
+  footer .source { color: var(--text-muted); }
+</style>
+
+<header>
+  <div>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="title"></h1>
+    <div class="subject" id="subject"></div>
+    <p class="subtitle" id="subtitle"></p>
+  </div>
+  <div class="brand">MTEB</div>
+</header>
+
+<table>
+  <thead>
+    <tr class="group" id="groups"></tr>
+    <tr class="bench" id="bench"></tr>
+  </thead>
+  <tbody id="body"></tbody>
+</table>
+<p class="note" id="note"></p>
+<footer><span id="credit"></span><span class="source" id="source"></span></footer>
+
+<script>
+const COPY = {
+  title: "One open model, measured on six boards",
+  subject: "google/embeddinggemma-2",
+  subtitle: "Best open model under 1B total parameters on the image and code boards; mid-field on multilingual text.",
+  note: "Mean(Task) per board. Best open = open weights in the registry; ≤1B = the registry's total parameter count. A dash is a model with no result on that board — a missing evaluation is not a low score.",
+  credit: "Added to MTEB by schechterh · results submitted by KennethEnevoldsen",
+  source: "Source: MTEB · leaderboard.mteb.org",
+};
+
+const d = JSON.parse(document.getElementById("card-data").textContent);
+document.documentElement.dataset.mode = d.mode || "light";
+document.getElementById("eyebrow").textContent = d.eyebrow;
+document.getElementById("title").textContent = COPY.title;
+document.getElementById("subject").textContent = COPY.subject;
+document.getElementById("subtitle").textContent = COPY.subtitle;
+document.getElementById("note").textContent = COPY.note;
+document.getElementById("credit").textContent = COPY.credit;
+document.getElementById("source").textContent = COPY.source;
+
+const groups = [];
+for (const c of d.columns) {
+  if (groups.length && groups[groups.length - 1].group === c.group) groups[groups.length - 1].span += 1;
+  else groups.push({group: c.group, span: 1});
+}
+// Real cells: a colspan per group heading, then one cell per benchmark. Nesting the whole
+// header inside a single cell is what made the first attempt unreadable — the spans
+// overflowed the cell they were in rather than spanning the columns.
+document.getElementById("groups").innerHTML =
+  "<th></th>" + groups.map((g) => `<th colspan="${g.span}">${g.group}</th>`).join("");
+document.getElementById("bench").innerHTML =
+  "<th>Mean (Task)</th>" + d.columns.map((c) =>
+    `<th>${c.benchmark}</th>`).join("");
+
+const split = (id) => id.includes("/") ? [id.split("/")[0], id.split("/").slice(1).join("/")] : ["", id];
+const fmt = (b) => b == null ? "" : (b >= 1 ? `${+b.toFixed(b >= 10 ? 1 : 2)}B` : `${Math.round(b * 1000)}M`);
+// Params appear once per row, in the first column: repeating the same size six times across
+// a row of one model is noise, and for the per-column rows it would be six different sizes
+// competing with the scores.
+const label = (r) => r.fixed
+  ? `<div class="who2">${split(r.label)[0]}</div><div class="name2">${split(r.label)[1]}</div>` +
+    `<div class="params">${fmt(r.params_b)}</div>`
+  : `<div class="rowlabel">${r.label}</div>`;
+
+const rows = d.columns[0].rows.length;
+let html = "";
+for (let i = 0; i < rows; i++) {
+  const first = d.columns[0].rows[i];
+  html += `<tr class="${first.subject ? "subject" : ""}${first.muted ? " muted" : ""}"><td>${label(first)}</td>`;
+  d.columns.forEach((c, ci) => {
+    const r = c.rows[i];
+    if (r.score == null) {
+      html += `<td class="missing"><span class="score">—</span><div class="who">not run</div></td>`;
+      return;
+    }
+    // A fixed-model row repeats its name in the label; a per-column row has to name the
+    // model it is actually reporting, with the org de-emphasised above it.
+    const who = r.fixed ? "" : `<div class="who">${split(r.model)[0]}</div><div class="name">${split(r.model)[1]}</div>`;
+    const size = ci === 0 && !r.fixed && r.params_b != null
+      ? `<div class="params">${fmt(r.params_b)}</div>` : "";
+    html += `<td><span class="score">${r.score.toFixed(2)}</span>${who}${size}</td>`;
+  });
+  html += "</tr>";
+}
+document.getElementById("body").innerHTML = html;
+
+// Bluesky caps alt text at 2000 characters, so this reads the table by column: six
+// labelled rows per board in card order, rather than naming every model in every cell.
+window.__altText = [
+  `${d.eyebrow}: ${COPY.title}. ${COPY.subject}.`,
+  COPY.subtitle,
+  "Scores are Mean(Task) per board, compared only against models with complete results there. Per board, in row order — best, best open weights, best open under 1B parameters, jina-embeddings-v5-omni-small, BidirLM-Omni-2.5B-Embedding, google/embeddinggemma-2:",
+  d.columns.map((c) => c.benchmark + ": " + c.rows.map((r) =>
+    r.score == null ? "not run" : r.score.toFixed(2)).join(", ") + ".").join(" "),
+  "Blank cells mean no complete result on that board. Source: MTEB, leaderboard.mteb.org.",
+].join(" ");
+</script>
