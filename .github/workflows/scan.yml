@@ -11,8 +11,7 @@ name: Scan for candidates
 #
 # The overlap is deliberate: `--since` reaches back eight days for a seven-day cadence,
 # so a PR merged near the boundary cannot fall between two runs. Re-scanning is free —
-# anything whose trigger PR already appears anywhere in `posts/`, including in
-# `rejected/`, is skipped, so a rejection stays rejected.
+# anything whose trigger PR already appears anywhere in `posts/` is skipped.
 #
 # WHAT THIS DOES NOT DO: it does not decide, draft, or publish. It opens folders that say
 # "something happened here" and stops. Everything downstream still needs a person.

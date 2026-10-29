@@ -108,9 +108,8 @@ class TestExpiry:
 
 
 class TestAlreadyTracked:
-    def test_reads_every_stage_including_rejected(self, tmp_path: pathlib.Path):
-        """A rejection that does not block re-proposal makes the record useless."""
-        for stage, n in (("1-candidates", 1), ("rejected", 2), ("5-posted", 3)):
+    def test_reads_every_stage(self, tmp_path: pathlib.Path):
+        for stage, n in (("1-candidates", 1), ("2-drafting", 2), ("5-posted", 3)):
             d = tmp_path / stage / f"p{n}"
             d.mkdir(parents=True)
             (d / "post.md").write_text(

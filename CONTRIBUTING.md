@@ -419,15 +419,24 @@ So check by hand, every time a post moves forward:
 
 Record anything borderline in `## Notes` so the reviewer sees the call you made.
 
-## Rejecting
+## Dropping a candidate
 
-Every rejection needs a `reason:`. `rejected/` is the most auditable thing in the repo —
-it is the record of what the pipeline chose *not* to say, and the first place to look if
-the account's judgement is ever questioned.
+A candidate that is not going to become a post is deleted, and the reason goes where a
+person will look for it: the commit message, or the PR if there is one. There is no
+`rejected/` folder — the record is git history, which is already the audit trail for
+everything else here and does not need a second copy of it.
 
-Rejections stick: `mteb-scan` skips any PR already referenced anywhere in the pipeline,
-so a rejected candidate does not reappear the next morning. If circumstances change
-(results finally land), move the folder back to `1-candidates/` by hand.
+Say which rule it failed, not just that it did. *Stale* (the trigger is older than the
+news window), *plumbing* (reference baselines, display fixes, label renames, folder
+moves), *superseded* (another candidate tells the same story), or *argues against itself*
+(the honest version leads with the model losing). A reason that would fit any candidate
+tells a future reader nothing about whether the call was right.
+
+Deleting is not permanent: `mteb-scan` only knows about PRs that appear in the pipeline
+*now*, so a dropped PR can be proposed again if it falls inside a later scan window —
+about eight days. If it was dropped for a reason that will still be true next week, that
+is one extra proposal; if circumstances change (the results finally land), the new folder
+is exactly what you want.
 
 ## References
 

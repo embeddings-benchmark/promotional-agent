@@ -176,15 +176,6 @@ def test_verified_false_cannot_reach_review(post):
     assert any("verified: false" in e for e in r.errors)
 
 
-def test_rejection_needs_a_reason(post):
-    r = rep()
-    p = post("rejected", frontmatter=(
-        "id: some-post\ntype: model_addition\ntrigger: mteb#1\ntrigger_date: 2026-08-01\n"
-    ))
-    validate.check_post(p, "rejected", r)
-    assert any("without a reason" in e for e in r.errors)
-
-
 def test_expires_before_scheduled_date_is_an_error(post):
     r = rep()
     name = "2026-08-06-dinghy-law-family"

@@ -9,9 +9,9 @@ The bio answers **"should I follow this?"**. Posts carry **news**. Anything that
 of every post belongs in the bio, not repeated in the feed.
 
 That distinction is why there is no pinned introduction post. An explainer would mostly
-restate the bio, and a first post is better spent on something that happened. See
-`posts/rejected/introducing-this-account/` for the full reasoning and the condition that
-would bring it back.
+restate the bio, and a first post is better spent on something that happened. One was
+drafted and dropped; the reasoning is in the commit that removed it, and the condition
+that would bring it back is a change to what the bio can carry.
 
 ## Identity
 

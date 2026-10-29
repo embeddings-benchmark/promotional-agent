@@ -24,9 +24,10 @@ appearing inside the results PR title. It will miss pairs and occasionally inven
 which is why every candidate records both PR numbers for a human to check rather than
 asserting the pairing as fact.
 
-Running it twice is safe. Anything whose trigger PR already appears anywhere in the
-pipeline — including in `rejected/` — is skipped, so a rejected candidate stays rejected
-instead of being re-proposed the next morning.
+Running it twice is safe: anything whose trigger PR already appears in the pipeline is
+skipped. Dropping a candidate deletes its folder, so a dropped PR *can* be proposed again
+if it falls inside a later scan window — the window is about eight days, so that is one
+extra proposal rather than a standing loop, and the second look is cheap.
 """
 
 import argparse
@@ -176,8 +177,8 @@ sources:
 
 # Two spellings of the same fact. `trigger:` writes a PR as `mteb#5043`; `sources:`
 # writes it as a URL, the way it was copied out of GitHub. Reading only the first form
-# means a PR that appears only in `sources:` is not tracked — and a rejected candidate
-# whose second PR is recorded only as a link gets re-proposed by the results branch.
+# means a PR that appears only in `sources:` is not tracked, and its results half gets
+# proposed a second time.
 PR_REF = re.compile(
     r"\b(mteb|results)#(\d+)\b"
     r"|github\.com/embeddings-benchmark/(mteb|results)/(?:pull|issues)/(\d+)"
@@ -187,8 +188,8 @@ PR_REF = re.compile(
 def already_tracked(posts: pathlib.Path) -> set[str]:
     """PR references (`mteb#5043`) that already exist anywhere in the pipeline.
 
-    Without this the scanner re-proposes everything every morning, including candidates
-    that were deliberately rejected — which would make `rejected/` useless as a record.
+    Without this the scanner re-proposes everything already in the pipeline every morning,
+    including candidates that are being drafted or are already scheduled.
     """
     seen = set()
     for post in posts.rglob("post.md"):

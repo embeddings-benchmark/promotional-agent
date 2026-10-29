@@ -369,9 +369,17 @@ def main() -> None:
     ap.add_argument("--handle", default="mteb.org")
     args = ap.parse_args()
 
+    # A missing pipeline is an error; an empty one is the normal state. Exiting non-zero
+    # for "nothing scheduled" made the hourly workflow red on every run of every quiet
+    # week — and a job that is red when nothing is wrong is a job nobody reads, which is
+    # how a real failure gets missed. The directory check keeps the loud failure for the
+    # case that deserves it: being run from the wrong place.
+    if not (args.posts / "4-scheduled").is_dir():
+        sys.exit(f"no {args.posts}/4-scheduled — run this from the repo root")
     scheduled = sorted((args.posts / "4-scheduled").glob("*/post.md"))
     if not scheduled:
-        sys.exit("nothing scheduled")
+        print("nothing scheduled")
+        return
 
     if args.all:
         due = scheduled

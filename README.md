@@ -47,8 +47,9 @@ Three guardrails make unattended publishing safe enough to leave alone:
 
 Reaching Autonomous would mean the agent choosing what to say without a person in the
 loop. That needs an answer to the question this repo exists to ask — whether the numbers
-can be trusted without a person checking them — and the rejection record in
-`posts/rejected/` is where the evidence accumulates.
+can be trusted without a person checking them. The evidence is the published archive and
+its `fetch.py` files: every number a reader saw can be recomputed from the folder it came
+from.
 
 ## How you are meant to use it
 
@@ -75,9 +76,10 @@ field — a folder and a field would drift the moment one changed without the ot
             │
             ▼
     1-candidates ──► 2-drafting ──► 3-review ──► 4-scheduled ──► 5-posted
-                          │              │
-                          └──────────────┴──────► rejected/   (reason: required)
 ```
+
+A candidate that is not going to become a post is deleted, with a line in the PR or
+commit saying why. Git keeps it; the pipeline does not.
 
 | stage | what it means | frontmatter it adds |
 |---|---|---|
@@ -86,7 +88,6 @@ field — a folder and a field would drift the moment one changed without the ot
 | `3-review` | everything checkable has been checked; awaiting the editorial call | `verified:` `evidence:` `media:` |
 | `4-scheduled` | approved, with a date | `scheduled_for:` `approved_by:` |
 | `5-posted` | archive of what went out | `posted_on:` `url:` |
-| `rejected` | dropped, and why | `reason:` (required) |
 
 Folders carry **no date until they are scheduled**. A candidate is just `dinghy-law-family`;
 at stage 4 it becomes `2026-08-06-dinghy-law-family`. A date in a folder name therefore
@@ -144,8 +145,9 @@ uv run mteb-publish --all
 ```
 
 `mteb-scan` is safe to re-run: any PR already referenced anywhere in the pipeline —
-including in `rejected/`, whether written as `mteb#5043` or as a GitHub URL — is skipped,
-so a rejection stays rejected.
+whether written as `mteb#5043` or as a GitHub URL — is skipped. A deleted candidate is not
+remembered, so it can return in a later scan window; the window is about eight days, so
+that is one extra proposal rather than a standing loop.
 
 Each post's `fetch.py` is a standalone [PEP 723](https://peps.python.org/pep-0723/)
 script declaring its own pinned dependencies. That is deliberate: a post's provenance
