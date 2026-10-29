@@ -110,14 +110,27 @@ def main() -> None:
         src.write_text(page_html)
         with sync_playwright() as p:
             browser = p.chromium.launch(channel=args.channel)
-            page = browser.new_page(
-                viewport={"width": width, "height": height},
-                device_scale_factor=SCALE,
-            )
-            page.goto(src.as_uri())
-            page.wait_for_function("window.__altText !== undefined")
-            page.screenshot(path=str(out))
-            alt = page.evaluate("window.__altText")
+            # Chromium intermittently fails to capture a real screenshot at 2x with a
+            # "Page.captureScreenshot: Unable to capture screenshot" protocol error, with
+            # nothing wrong on the page. It succeeds on a fresh page, so one retry converts
+            # a confusing failure into a wait of about a second.
+            alt = None
+            for attempt in (1, 2, 3):
+                page = browser.new_page(
+                    viewport={"width": width, "height": height},
+                    device_scale_factor=SCALE,
+                )
+                page.goto(src.as_uri())
+                page.wait_for_function("window.__altText !== undefined")
+                alt = page.evaluate("window.__altText")
+                try:
+                    page.screenshot(path=str(out))
+                    page.close()
+                    break
+                except Exception:
+                    page.close()
+                    if attempt == 3:
+                        raise
             browser.close()
 
     write_alt(pathlib.Path(args.card), alt)
