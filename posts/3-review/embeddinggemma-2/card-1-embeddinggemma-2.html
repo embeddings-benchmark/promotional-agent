@@ -1,0 +1,281 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>EmbeddingGemma 2 — three boards</title>
+<!--
+  Bespoke card for posts/2-drafting/embeddinggemma-2.
+
+  The claim is not a ranking, it is a *table*: four models that have complete results on
+  all three of MTEB(Multilingual, v2), MIEB(lite) and MAEB(v1), and where the subject sits
+  in each column. A bars card would have to pick one board and lose the argument; a radar
+  would compare task types, which is a different question.
+
+  Palette is inherited from templates/model-release/card-bars.html rather than retyped, so
+  the two cannot drift. Everything else here is this card's own.
+
+  Numbers are written by fetch.py into #card-data; every sentence lives in COPY.
+-->
+<script type="application/json" id="card-data">
+{
+  "eyebrow": "NEW ON MTEB",
+  "boards": [
+    {
+      "name": "MTEB(Multilingual, v2)",
+      "n_tasks": 131,
+      "n_complete": 96
+    },
+    {
+      "name": "MIEB(lite)",
+      "n_tasks": 51,
+      "n_complete": 51
+    },
+    {
+      "name": "MAEB(v1)",
+      "n_tasks": 30,
+      "n_complete": 23
+    }
+  ],
+  "rows": [
+    {
+      "model": "jinaai/jina-embeddings-v5-omni-small",
+      "total_params_b": 1.626,
+      "subject": false,
+      "scores": {
+        "MTEB(Multilingual, v2)": 67.0,
+        "MIEB(lite)": 61.07,
+        "MAEB(v1)": 50.41
+      },
+      "ranks": {
+        "MTEB(Multilingual, v2)": 13,
+        "MIEB(lite)": 6,
+        "MAEB(v1)": 5
+      }
+    },
+    {
+      "model": "jinaai/jina-embeddings-v5-omni-nano",
+      "total_params_b": 0.986,
+      "subject": false,
+      "scores": {
+        "MTEB(Multilingual, v2)": 65.52,
+        "MIEB(lite)": 49.38,
+        "MAEB(v1)": 50.14
+      },
+      "ranks": {
+        "MTEB(Multilingual, v2)": 17,
+        "MIEB(lite)": 25,
+        "MAEB(v1)": 6
+      }
+    },
+    {
+      "model": "BidirLM/BidirLM-Omni-2.5B-Embedding",
+      "total_params_b": 2.445,
+      "subject": false,
+      "scores": {
+        "MTEB(Multilingual, v2)": 63.5,
+        "MIEB(lite)": 55.96,
+        "MAEB(v1)": 52.36
+      },
+      "ranks": {
+        "MTEB(Multilingual, v2)": 24,
+        "MIEB(lite)": 10,
+        "MAEB(v1)": 3
+      }
+    },
+    {
+      "model": "google/embeddinggemma-2",
+      "total_params_b": 0.271,
+      "subject": true,
+      "scores": {
+        "MTEB(Multilingual, v2)": 60.52,
+        "MIEB(lite)": 63.52,
+        "MAEB(v1)": 49.31
+      },
+      "ranks": {
+        "MTEB(Multilingual, v2)": 33,
+        "MIEB(lite)": 5,
+        "MAEB(v1)": 7
+      }
+    }
+  ]
+}
+</script>
+<script type="text/plain" id="alt-text">
+NEW ON MTEB: One open model, measured on text, images and audio. Only four models have complete results on all three of MTEB's general benchmarks. Among them, google/embeddinggemma-2 leads on images and trails on text and audio. Table of the 4 models with complete results on all three boards, rows in the order of their text score. jina-embeddings-v5-omni-small — MTEB(Multilingual, v2): 67.00, rank 13; MIEB(lite): 61.07, rank 6; MAEB(v1): 50.41, rank 5. jina-embeddings-v5-omni-nano — MTEB(Multilingual, v2): 65.52, rank 17; MIEB(lite): 49.38, rank 25; MAEB(v1): 50.14, rank 6. BidirLM-Omni-2.5B-Embedding — MTEB(Multilingual, v2): 63.50, rank 24; MIEB(lite): 55.96, rank 10; MAEB(v1): 52.36, rank 3. embeddinggemma-2 (the new model) — MTEB(Multilingual, v2): 60.52, rank 33; MIEB(lite): 63.52, rank 5; MAEB(v1): 49.31, rank 7. Mean (Task), with rank among the models that have complete results on that board. Sizes are the registry's total parameter count; the model has several tower configurations and the results files do not record which one ran. Added to MTEB by schechterh · results submitted by KennethEnevoldsen. Source: MTEB · leaderboard.mteb.org
+</script>
+
+<style>
+:root {
+    --surface:        #fcfcfb;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --accent:         #3d7bff;
+    --peer:           #b9b7b0;
+    --gridline:       #e1e0d9;
+    --axis:           #c3c2b7;
+    --hairline:       rgba(11, 11, 11, 0.10);
+    --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  [data-mode="dark"] {
+    --surface:        #1a1a19;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --accent:         #5b8fff;
+    --peer:           #55534e;
+    --gridline:       #2c2c2a;
+    --axis:           #383835;
+    --hairline:       rgba(255, 255, 255, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--surface); }
+  body {
+    width: 1200px; height: 1200px; overflow: hidden;
+    color: var(--text-primary); font-family: var(--font-sans);
+    display: flex; flex-direction: column;
+    padding: 44px 56px 32px;
+  }
+
+  header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .eyebrow {
+    font-size: 18px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h1 { font-size: 44px; font-weight: 640; letter-spacing: -0.02em; margin-top: 10px; max-width: 880px; }
+  .subtitle { font-size: 21px; color: var(--text-secondary); margin-top: 10px; max-width: 900px; line-height: 1.35; }
+
+  .brand { display: flex; align-items: center; gap: 12px; padding-top: 4px; flex: none; }
+  .brand-name { font-size: 30px; font-weight: 700; letter-spacing: 0.01em; }
+
+  /* The table is the argument, so it gets the room: a fixed row rhythm, columns sized by
+     content, and the subject row carrying the only fill on the canvas. */
+  table { width: 100%; margin-top: 44px; border-collapse: collapse; table-layout: fixed; }
+  col.model-col { width: 40%; }
+  col.board-col { width: 20%; }
+  th, td { text-align: right; padding: 0 0 0 16px; }
+  th:first-child, td:first-child { text-align: left; padding-left: 0; }
+  thead th {
+    font-size: 15px; font-weight: 600; color: var(--text-muted);
+    letter-spacing: 0.02em; padding-bottom: 14px; border-bottom: 2px solid var(--hairline);
+    vertical-align: bottom;
+  }
+  thead th .tasks { display: block; font-weight: 400; margin-top: 4px; }
+  tbody tr { border-bottom: 1px solid var(--gridline); }
+  tbody tr:last-child { border-bottom: none; }
+  td { height: 118px; vertical-align: middle; }
+
+  .model { display: block; }
+  .model .org { font-size: 18px; color: var(--text-secondary); }
+  .model .name { font-size: 24px; font-weight: 600; white-space: nowrap; }
+  .model .size { display: block; font-size: 15px; color: var(--text-muted); margin-top: 3px; }
+
+  td .score { display: block; font-size: 30px; font-weight: 620; font-variant-numeric: tabular-nums; }
+  td .rank { display: block; font-size: 15px; color: var(--text-muted); margin-top: 4px; }
+  td.best .score { color: var(--text-primary); }
+  td.best .rank::after { content: " · best of the four"; color: var(--accent); }
+
+  tr.subject td { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  tr.subject td:first-child { border-left: 4px solid var(--accent); padding-left: 16px; }
+  tr.subject .name { color: var(--accent); }
+  tbody tr:not(.subject) td .score { color: var(--text-secondary); }
+
+  .note { font-size: 15px; color: var(--text-muted); margin-top: 18px; line-height: 1.4; }
+  footer {
+    margin-top: auto; padding-top: 18px; border-top: 1px solid var(--hairline);
+    display: flex; justify-content: space-between; font-size: 15px; color: var(--text-secondary);
+  }
+  footer .source { color: var(--text-muted); }
+</style>
+
+<header>
+  <div>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="title"></h1>
+    <p class="subtitle" id="subtitle"></p>
+  </div>
+  <div class="brand"><span class="brand-name">MTEB</span></div>
+</header>
+
+<table>
+  <colgroup><col class="model-col"><col class="board-col"><col class="board-col"><col class="board-col"></colgroup>
+  <thead><tr id="head"></tr></thead>
+  <tbody id="body"></tbody>
+</table>
+
+<p class="note" id="note"></p>
+<footer><span id="credit"></span><span class="source" id="source"></span></footer>
+
+<script>
+const COPY = {
+  title: "One open model, measured on text, images and audio",
+  subtitle: "Only four models have complete results on all three of MTEB's general benchmarks. Among them, google/embeddinggemma-2 leads on images and trails on text and audio.",
+  note: "Mean (Task), with rank among the models that have complete results on that board. Sizes are the registry's total parameter count; the model has several tower configurations and the results files do not record which one ran.",
+  credit: "Added to MTEB by schechterh · results submitted by KennethEnevoldsen",
+  source: "Source: MTEB · leaderboard.mteb.org",
+};
+
+const d = JSON.parse(document.getElementById("card-data").textContent);
+document.documentElement.dataset.mode = d.mode || "light";
+
+document.getElementById("eyebrow").textContent = d.eyebrow || "NEW ON MTEB";
+document.getElementById("title").textContent = COPY.title;
+document.getElementById("subtitle").textContent = COPY.subtitle;
+document.getElementById("note").textContent = COPY.note;
+document.getElementById("credit").textContent = COPY.credit;
+document.getElementById("source").textContent = COPY.source;
+
+const fmtSize = (b) => b == null ? "" : (b >= 1 ? `${b.toFixed(b >= 10 ? 1 : 2)}B params` : `${Math.round(b * 1000)}M params`);
+const short = (name) => name.split("/").pop();
+
+document.getElementById("head").innerHTML =
+  `<th>Model</th>` +
+  d.boards.map((b) =>
+    `<th>${b.name}<span class="tasks">${b.n_tasks} tasks · ${b.n_complete} complete</span></th>`
+  ).join("");
+
+// Column-wise "best of the four": the post says leads on images, trails on text and
+// audio, so the card has to show all three columns, not just the flattering one.
+const best = {};
+for (const b of d.boards) {
+  let top = -Infinity;
+  for (const r of d.rows) if (r.scores[b.name] != null && r.scores[b.name] > top) top = r.scores[b.name];
+  best[b.name] = top;
+}
+
+document.getElementById("body").innerHTML = d.rows.map((r) => {
+  const [org, name] = r.model.includes("/") ? r.model.split("/") : ["", r.model];
+  // "BidirLM" over "BidirLM-Omni-2.5B-Embedding" reads as a stutter; drop the provider
+  // line when the model name already carries it.
+  const orgLine = org.startsWith(name) ? "" : `<span class="org">${org}</span>`;
+  return `<tr class="${r.subject ? "subject" : ""}">
+    <td><span class="model">
+      ${orgLine}
+      <span class="name">${name}</span>
+      <span class="size">${fmtSize(r.total_params_b)}</span>
+    </span></td>
+    ${d.boards.map((b) => {
+      const s = r.scores[b.name], k = r.ranks[b.name];
+      const isBest = s != null && s === best[b.name];
+      return `<td class="${isBest ? "best" : ""}">
+        <span class="score">${s == null ? "—" : s.toFixed(2)}</span>
+        <span class="rank">${k == null ? "no complete row" : `rank ${k}`}</span>
+      </td>`;
+    }).join("")}
+  </tr>`;
+}).join("");
+
+window.__altText = [
+  `${d.eyebrow}: ${COPY.title}.`,
+  COPY.subtitle,
+  `Table of the ${d.rows.length} models with complete results on all three boards, rows in the order of their text score.`,
+  d.rows.map((r) => {
+    const cells = d.boards.map((b) => {
+      const s = r.scores[b.name], k = r.ranks[b.name];
+      return s == null ? `${b.name}: no complete row` : `${b.name}: ${s.toFixed(2)}, rank ${k}`;
+    }).join("; ");
+    return `${short(r.model)}${r.subject ? " (the new model)" : ""} — ${cells}`;
+  }).join(". ") + ".",
+  COPY.note,
+  `${COPY.credit}. ${COPY.source}`,
+].join(" ");
+</script>
