@@ -70,8 +70,6 @@ def post(tmp_path: pathlib.Path):
                 )
             if stage == "5-posted":
                 frontmatter += "posted_on: 2026-08-06\nurl: https://bsky.app/x\n"
-            if stage == "rejected":
-                frontmatter += "reason: results never landed\n"
 
         if blocks is None:
             blocks = ["A post about a model.\n"]

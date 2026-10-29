@@ -24,7 +24,7 @@ import sys
 
 BLUESKY_LIMIT = 300
 
-STAGES = ("1-candidates", "2-drafting", "3-review", "4-scheduled", "5-posted", "rejected")
+STAGES = ("1-candidates", "2-drafting", "3-review", "4-scheduled", "5-posted")
 
 # Fields each stage requires beyond the common set. A stage inherits nothing: what is
 # listed here is what that stage must have, because the point is to catch a folder that
@@ -37,7 +37,6 @@ REQUIRED = {
                     "scheduled_for", "approved_by"},
     "5-posted": {"id", "type", "trigger", "trigger_date", "verified", "media",
                  "scheduled_for", "posted_on", "approved_by"},
-    "rejected": {"id", "type", "trigger", "trigger_date", "reason"},
 }
 
 # Stages that must have a rendered card. Which *files* those are comes from the
@@ -186,9 +185,6 @@ def check_post(path: pathlib.Path, stage: str, rep: Report) -> None:
 
     if fm.get("verified") == "false" and stage in ("3-review", "4-scheduled", "5-posted"):
         rep.error(where, "reached review with verified: false")
-
-    if stage == "rejected" and not fm.get("reason"):
-        rep.error(where, "rejection without a reason")
 
     # The whole pipeline rests on a human deciding what goes out. Until this field
     # exists, nothing distinguishes "someone approved it" from "a folder got moved".
