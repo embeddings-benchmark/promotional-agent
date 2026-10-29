@@ -161,8 +161,7 @@ uv run mteb-validate           # the posts themselves
 
 `.github/workflows/ci.yml` runs all three on every push and PR. `mteb-validate` covers the
 rules a machine can check on a *post*; `pytest` covers the rules a machine can check on
-the *tooling* — the date arithmetic, the cohort builders, the prompt-injection sanitiser,
-and every publish-time refusal. Neither can tell you whether a post is worth publishing;
+the *tooling* — the date arithmetic, the cohort builders, and every publish-time refusal. Neither can tell you whether a post is worth publishing;
 that is `CONTRIBUTING.md` and a person.
 
 ## Layout
@@ -186,7 +185,6 @@ src/mtebpost/
   leaderboard_api.py live leaderboard-backend queries — the data path everything uses
   model_release.py   cohort selection, Pareto/radar/bars advice, card-data builders
   scoreboard.py      the local-`mteb` path; legacy, needs the `leaderboard` extra
-  sanitise.py        cleans contributor prose before any of it reaches a model
 templates/model-release/  the three card shapes (bars, pareto, radar)
 posts/               the pipeline (above)
 tests/               the suite ci.yml runs
