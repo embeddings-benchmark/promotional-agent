@@ -1,7 +1,7 @@
 [project]
 name = "mtebpost"
 version = "0.1.0"
-description = "Tooling for drafting MTEB social posts: candidate detection, leaderboard queries, card rendering."
+description = "Autopublish scheduled posts for a project: candidate detection, leaderboard queries, card rendering, approval-gated publishing."
 readme = "README.md"
 requires-python = ">=3.11"
 

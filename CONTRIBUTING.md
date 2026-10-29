@@ -7,6 +7,10 @@ This file is the reasoning behind them, which is what you need while actually dr
 Written as instructions because that is what an agent needs, and read as documentation
 because that is what a person auditing it needs. Same text either way.
 
+If you are here to get a post *on the account* rather than to write one from scratch, read
+[scheduling-a-post.md](docs/scheduling-a-post.md) instead — it is the contributor's path
+through the pipeline, and this file is the standard it is judged by.
+
 Two criteria run through every stage: a post must be **newsworthy**, and it must be **easy
 to read and hard to misread**. Both are judgement calls that `mteb-validate` cannot make,
 and a post that fails either is rejected however correct its numbers are. Neither is
