@@ -369,9 +369,13 @@ def main() -> None:
     ap.add_argument("--handle", default="mteb.org")
     args = ap.parse_args()
 
+    # An empty queue is the normal state, not a failure: exiting non-zero for "nothing
+    # scheduled" made the hourly workflow red on every run of every quiet week, and a job
+    # that is red when nothing is wrong is a job nobody reads.
     scheduled = sorted((args.posts / "4-scheduled").glob("*/post.md"))
     if not scheduled:
-        sys.exit("nothing scheduled")
+        print("nothing scheduled")
+        return
 
     if args.all:
         due = scheduled

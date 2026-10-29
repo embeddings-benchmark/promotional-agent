@@ -126,3 +126,13 @@ def test_send_refuses_a_folder_outside_4_scheduled(tmp_path: pathlib.Path):
     post.write_text("---\nid: x\napproved_by: someone\n---\n```\nhello\n```\n")
     with pytest.raises(SystemExit, match="not 4-scheduled"):
         publish.send(post, "mteb.org")
+
+
+class TestMain:
+    """An empty queue is the normal state, and must not fail the hourly workflow."""
+
+    def test_empty_queue_exits_zero(self, tmp_path: pathlib.Path, monkeypatch, capsys):
+        (tmp_path / "4-scheduled").mkdir()
+        monkeypatch.setattr("sys.argv", ["mteb-publish", "--due", "--posts", str(tmp_path)])
+        publish.main()  # no SystemExit
+        assert "nothing scheduled" in capsys.readouterr().out
